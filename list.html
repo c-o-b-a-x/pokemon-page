@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pokemon List</title>
+    <style>
+      .navbar {
+        border: 2px black solid;
+      }
+      .navbar-item {
+        text-decoration: none;
+        font-size: 2em;
+        color: black;
+        padding: 15px;
+      }
+      .pokelist,
+      .container {
+        max-width: 1200px;
+        margin: 5%;
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .pokebutton {
+        width: 20%;
+        display: inline-block;
+        border: 1px solid black;
+        padding: 0.5em;
+        text-align: center;
+        box-sizing: border-box;
+        margin: 0px;
+        user-select: none;
+      }
+      .pokebutton:hover {
+        background-color: lightgray;
+        cursor: pointer;
+        border: 1px solid red;
+      }
+      .pokebutton:active {
+        background-color: darkgray;
+      }
+      .pokebutton.clicked {
+        background-color: green;
+      }
+      #ButtonList {
+        border: 5px solid orange;
+      }
+      .poke-image img {
+        width: 600px;
+        height: 600px;
+        object-fit: contain;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="navbar">
+      <a class="navbar-item" href="index.html">Home</a>
+      <a class="navbar-item" href="hunt.html">Poke Hunt</a>
+      <a class="navbar-item" href="list.html">Pokemon List</a>
+    </div>
+
+    <div class="poke-image" id="image">
+      <img class="hidden" id="hide" src="" alt="" />
+    </div>
+
+    <div class="pokelist" id="ButtonList"></div>
+
+    <script>
+      const hide = document.getElementById("hide");
+      const buttonList = document.getElementById("ButtonList");
+      const image = document.getElementById("image");
+
+      function createPokeButton(pokerecord) {
+        const pokediv = document.createElement("div");
+        pokediv.classList.add("pokebutton");
+        pokediv.textContent = pokerecord.name;
+
+        pokediv.addEventListener("click", () => {
+          hide.classList.remove("hidden");
+          fetch(pokerecord.url)
+            .then((response) => response.json())
+            .then((pokemonData) => {
+              createPokeImg(pokemonData);
+              console.log(pokemonData);
+            });
+        });
+
+        return pokediv;
+      }
+
+      function createPokeImg(pokemon) {
+        const img = image.querySelector("img");
+        img.src = pokemon.sprites.other["official-artwork"].front_default;
+        img.alt = pokemon.name;
+      }
+
+      function start() {
+        fetch("https://pokeapi.co/api/v2/pokemon/?limit=2000")
+          .then((response) => response.json())
+          .then((data) => {
+            for (const basicInfo of data.results) {
+              buttonList.append(createPokeButton(basicInfo));
+            }
+          });
+      }
+
+      start();
+    </script>
+  </body>
+</html>
