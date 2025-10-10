@@ -26,6 +26,9 @@
       .border {
         border-radius: 10px;
       }
+      .hidden {
+        display: none;
+      }
     </style>
   </head>
 
@@ -55,6 +58,8 @@
 
     <script>
       let restart = document.getElementById("restart");
+      let img = document.querySelector(".guess");
+
       let id_container = document.getElementById("id");
       let saved_id = getCookie("Score_dex");
       let id = 1;
@@ -84,10 +89,10 @@
       const answer = document.getElementById("status");
       function createPokeImg(pokemon) {
         guess.classList.add("guess");
-        let img = document.querySelector(".guess");
         img.src = pokemon.sprites.other["official-artwork"].front_default;
         img.alt = pokemon.name;
       }
+
       restart.addEventListener("click", function () {
         id = 1;
         document.cookie = `Score_dex=${id}; expires=${expires.toUTCString()}; path=/`;
