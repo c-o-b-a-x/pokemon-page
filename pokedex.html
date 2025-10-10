@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .navbar {
+        background-color: #ff0000;
+        border: 2px black solid;
+      }
+      .navbar-item {
+        text-decoration: none;
+        font-size: 2em;
+        color: black;
+        padding: 15px;
+      }
+      .guess {
+        filter: brightness(0);
+      }
+      .center {
+        display: block;
+        margin: 0 auto;
+        text-align: center;
+      }
+      .border {
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="navbar">
+      <a class="navbar-item" href="index.html">Home</a>
+      <a class="navbar-item" href="hunt.html">Poke Hunt</a>
+      <a class="navbar-item" href="list.html">Pokemon List</a>
+      <a class="navbar-item" href="who.html">Who's That Pokemon</a>
+      <a class="navbar-item" href="pokedex.html">Name The Pokedex</a>
+    </div>
+
+    <div class="container center">
+      <h1 class="center border">Name The Pokedex</h1>
+      <p id="id">id:0</p>
+      <img class="guess center" id="guess" src="" alt="" />
+    </div>
+    <div class="center">
+      <h2>Input Guess Here!</h2>
+      <form action="" id="guess_pokemon">
+        <input type="text" name="pokemon" id="" />
+        <button id="guess_submit">Submit</button>
+        <button id="restart">restart Pokedex</button>
+      </form>
+      <p id="status"></p>
+    </div>
+
+    <script>
+      let restart = document.getElementById("restart");
+      let id_container = document.getElementById("id");
+      let saved_id = getCookie("Score_dex");
+      let id = 0;
+      if (saved_id) id = Number(saved_id);
+      id_container.innerText = "id: " + id;
+
+      let expires = new Date();
+      expires.setDate(expires.getDate() + 365);
+      let guess = document.getElementById("guess");
+      let name = "";
+      const guess_pokemon = document.getElementById("guess_pokemon");
+      const guess_submit = document.getElementById("guess_submit");
+
+      function getRandomPokemon() {
+        answer.innerText = "";
+
+        fetch("https://pokeapi.co/api/v2/pokemon/" + id)
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (pokemon) {
+            createPokeImg(pokemon);
+            name = pokemon.name;
+            console.log(name);
+          });
+      }
+      const answer = document.getElementById("status");
+      function createPokeImg(pokemon) {
+        guess.classList.add("guess");
+        let img = document.querySelector(".guess");
+        img.src = pokemon.sprites.other["official-artwork"].front_default;
+        img.alt = pokemon.name;
+      }
+      restart.addEventListener("click", function () {
+        id = 1;
+        document.cookie = `Score_dex=${id}; expires=${expires.toUTCString()}; path=/`;
+        getRandomPokemon();
+      });
+      guess_submit.addEventListener("click", function (e) {
+        e.preventDefault();
+        check_name(name);
+      });
+      function check_name(name) {
+        const fd = new FormData(guess_pokemon);
+        let poke_guess = fd.get("pokemon");
+        if (poke_guess === name) {
+          id += 1;
+          id_container.innerText = "id: " + id;
+          answer.innerText = "CORRECT";
+          guess_pokemon.reset();
+          guess.classList.remove("guess");
+          document.cookie = `Score_dex=${id}; expires=${expires.toUTCString()}; path=/`;
+
+          setTimeout(getRandomPokemon, 1000);
+        } else {
+          answer.innerText = "Wrong(maybe check your spelling)";
+        }
+      }
+      function getCookie(name) {
+        let cookies = document.cookie.split(";");
+        for (let cookie of cookies) {
+          let [key, val] = cookie.split("=");
+          if (key.trim() === name) return val;
+        }
+        return null;
+      }
+      getRandomPokemon();
+    </script>
+  </body>
+</html>
