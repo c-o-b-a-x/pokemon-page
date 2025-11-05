@@ -1,19 +1,106 @@
 <!DOCTYPE html>
+
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pokemon|Home</title>
+    <title>Pokémon | Home</title>
     <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+
+      body {
+        font-family: "Trebuchet MS", sans-serif;
+        color: #222;
+        text-align: center;
+        /* Full-page gradient that stretches with content */
+        background: linear-gradient(180deg, #ffcb05, #3b4cca);
+        background-attachment: fixed; /* keeps the gradient static instead of repeating */
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
+
+      /* Navbar */
       .navbar {
         background-color: #ff0000;
-        border: 2px black solid;
+        border-bottom: 3px solid black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
       }
+
       .navbar-item {
         text-decoration: none;
-        font-size: 2em;
+        font-size: 1.5em;
         color: black;
-        padding: 15px;
+        padding: 10px 20px;
+        margin: 0 10px;
+        transition: 0.3s;
+      }
+
+      .navbar-item:hover {
+        background-color: #fff;
+        border-radius: 10px;
+        transform: scale(1.1);
+      }
+
+      /* Hero Section */
+      .hero {
+        margin-top: 60px;
+      }
+
+      .hero img {
+        width: 200px;
+        margin-top: 30px;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-15px);
+        }
+        100% {
+          transform: translateY(0px);
+        }
+      }
+
+      h1 {
+        font-size: 3em;
+        color: #ff0000;
+        text-shadow: 2px 2px #000;
+      }
+
+      p {
+        font-size: 1.3em;
+        color: #fff;
+        max-width: 600px;
+        margin: 20px auto;
+      }
+
+      .button {
+        display: inline-block;
+        background-color: #ff0000;
+        color: white;
+        font-size: 1.2em;
+        text-decoration: none;
+        padding: 10px 25px;
+        border-radius: 8px;
+        border: 2px solid black;
+        margin-top: 20px;
+        transition: 0.3s;
+      }
+
+      .button:hover {
+        background-color: white;
+        color: black;
       }
     </style>
   </head>
@@ -26,8 +113,19 @@
       <a class="navbar-item" href="who.html">Who's That Pokemon</a>
       <a class="navbar-item" href="pokedex.html">Name The Pokedex</a>
     </div>
+
+    <div class="hero">
+      <h1>Welcome to the Pokémon World!</h1>
+      <p>
+        Explore exciting adventures, test your Pokémon knowledge, and become the
+        ultimate Pokémon Master!
+      </p>
+      <img
+        src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"
+        alt="Pikachu"
+      />
+      <br />
+      <a href="hunt.html" class="button">Start Your Journey</a>
+    </div>
   </body>
 </html>
-<!--Plans
- Whos that pokemon
- -->

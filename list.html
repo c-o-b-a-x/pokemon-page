@@ -1,61 +1,149 @@
 <!DOCTYPE html>
+
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pokemon List</title>
+    <title>Pokémon | List</title>
     <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+
+      body {
+        font-family: "Trebuchet MS", sans-serif;
+        color: #222;
+        text-align: center;
+        /* Full-page gradient that stretches with content */
+        background: linear-gradient(180deg, #ffcb05, #3b4cca);
+        background-attachment: fixed; /* keeps the gradient static instead of repeating */
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
+
+      /* Navbar */
       .navbar {
         background-color: #ff0000;
-        border: 2px black solid;
+        border-bottom: 3px solid black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
       }
+
       .navbar-item {
         text-decoration: none;
-        font-size: 2em;
+        font-size: 1.5em;
         color: black;
-        padding: 15px;
+        padding: 10px 20px;
+        margin: 0 10px;
+        transition: 0.3s;
       }
-      .pokelist,
-      .container {
-        max-width: 1200px;
-        margin: 5%;
+
+      .navbar-item:hover {
+        background-color: #fff;
+        border-radius: 10px;
+        transform: scale(1.1);
+      }
+
+      /* Page title */
+      h1 {
+        font-size: 2.5em;
+        color: #ff0000;
+        text-shadow: 2px 2px #000;
+        margin-top: 30px;
+      }
+
+      /* Pokémon Image */
+      .poke-image {
         display: flex;
-        flex-wrap: wrap;
+        justify-content: center;
+        margin: 30px 0;
       }
-      .pokebutton {
-        width: 20%;
-        display: inline-block;
-        border: 1px solid black;
-        padding: 0.5em;
-        text-align: center;
-        box-sizing: border-box;
-        margin: 0px;
-        user-select: none;
-      }
-      .pokebutton:hover {
-        background-color: lightgray;
-        cursor: pointer;
-        border: 1px solid red;
-      }
-      .pokebutton:active {
-        background-color: darkgray;
-      }
-      .pokebutton.clicked {
-        background-color: green;
-      }
-      #ButtonList {
-        border: 5px solid #ff0000;
-      }
+
       .poke-image img {
-        width: 600px;
-        height: 600px;
+        width: 300px;
+        height: 300px;
         object-fit: contain;
+        background: #fff;
+        border-radius: 20px;
+        border: 5px solid #ff0000;
+        box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.3);
+        animation: float 3s ease-in-out infinite;
       }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-15px);
+        }
+        100% {
+          transform: translateY(0px);
+        }
+      }
+
       .hidden {
         display: none;
       }
+
+      /* Pokémon Button List */
+      .pokelist {
+        max-width: 1200px;
+        margin: 0 auto 60px auto;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+      }
+
+      .pokebutton {
+        flex: 0 1 calc(20% - 10px);
+        background: #fff;
+        border: 3px solid #ff0000;
+        border-radius: 12px;
+        padding: 15px;
+        text-align: center;
+        font-size: 1.1em;
+        text-transform: capitalize;
+        font-weight: bold;
+        color: #222;
+        cursor: pointer;
+        transition: 0.3s;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      .pokebutton:hover {
+        background-color: #ff0000;
+        color: white;
+        transform: scale(1.05);
+      }
+
+      .pokebutton:active {
+        background-color: darkred;
+      }
+
+      @media (max-width: 900px) {
+        .pokebutton {
+          flex: 0 1 calc(33.3% - 10px);
+        }
+      }
+
+      @media (max-width: 600px) {
+        .pokebutton {
+          flex: 0 1 calc(50% - 10px);
+        }
+      }
     </style>
   </head>
+
   <body>
     <div class="navbar">
       <a class="navbar-item" href="index.html">Home</a>
@@ -64,6 +152,8 @@
       <a class="navbar-item" href="who.html">Who's That Pokemon</a>
       <a class="navbar-item" href="pokedex.html">Name The Pokedex</a>
     </div>
+
+    <h1>Pokémon List</h1>
 
     <div class="poke-image" id="image">
       <img class="hidden" id="hide" src="" alt="" />
@@ -87,7 +177,6 @@
             .then((response) => response.json())
             .then((pokemonData) => {
               createPokeImg(pokemonData);
-              console.log(pokemonData);
             });
         });
 

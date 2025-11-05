@@ -1,131 +1,240 @@
 <!DOCTYPE html>
+
 <html lang="en">
   <head>
     <link rel="icon" href="background.jpg" type="image/jpg" />
-
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pokemon Hunt</title>
+    <title>Pokémon | Hunt</title>
     <style>
-      :root {
-        --poke-width: 60px;
+/* ---------- Global / body ---------- */
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
       }
-      .container {
-        background-image: url(background.jpg);
-        min-height: 600px;
-        background-size: cover;
-        position: relative;
-        overflow: hidden;
-      }
-      .pokelist,
-      .container {
-        max-width: 1200px;
-        margin: 5%;
-        display: flex;
-        flex-wrap: wrap;
-      }
-      .pokebutton {
-        width: 20%;
-        display: inline-block;
-        border: 1px solid black;
-        padding: 0.5em;
+
+      body {
+        font-family: "Trebuchet MS", sans-serif;
+        color: #222;
         text-align: center;
-        box-sizing: border-box;
-        margin: 0px;
-        user-select: none;
+        /* Full-page gradient that stretches with content */
+        background: linear-gradient(180deg, #ffcb05, #3b4cca);
+        background-attachment: fixed; /* keeps the gradient static instead of repeating */
+        background-repeat: no-repeat;
+        background-size: cover;
       }
-      .pokebutton:hover {
-        background-color: lightgray;
-        cursor: pointer;
-        border: 1px solid red;
-      }
-      .pokebutton:active {
-        background-color: darkgray;
-      }
-      .pokebutton.clicked {
-        background-color: green;
-      }
-      #ButtonList {
-        border: 5px solid orange;
-        display: none;
-      }
-      .pokeimg {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: var(--poke-width);
-      }
-      #scene {
-        cursor: crosshair;
-      }
-      .pokeimg {
-        transition: transform 0.6s ease-out, opacity 0.6s ease-out;
-      }
-      .explode {
-        transform: scale(3) rotate(720deg);
-        opacity: 0;
-        filter: blur(5px);
-      }
-
-      .laser-dot {
-        position: absolute;
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: red;
-
-        box-shadow: 0 0 8px 4px rgba(255, 0, 0, 0.6);
-        pointer-events: none;
-        transform: translate(-50%, -50%);
-        animation: fadeout 0.5s linear forwards;
-      }
-
-      @keyframes fadeout {
-        from {
-          opacity: 1;
-          transform: translate(-50%, -50%) scale(1);
-        }
-        to {
-          opacity: 0;
-          transform: translate(-50%, -50%) scale(2);
-        }
-      }
-      #submitbtn {
-        width: 200px;
-        display: block;
-        margin: 0 auto;
-      }
-
-      .ps {
-        display: flex;
-      }
-      .ps p {
-        padding-left: 22%;
-      }
-      .lasercheck {
+/* ---------- Navbar ---------- */
+  .navbar {
+        background-color: #ff0000;
+        border-bottom: 3px solid black;
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 8px;
-        margin: 20px auto;
+        padding: 10px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
       }
 
-      .navbar {
-        background-color: #ff0000;
-        border: 2px black solid;
-      }
       .navbar-item {
         text-decoration: none;
-        font-size: 2em;
+        font-size: 1.5em;
         color: black;
-        padding: 15px;
+        padding: 10px 20px;
+        margin: 0 10px;
+        transition: 0.3s;
       }
-    </style>
-  </head>
-  <body>
-    <!-- APIs let your product or service connect with others 
-     without knowing the underlying implementation-->
-    <!--We are going to be using fetch in interact with a REST API-->
+
+      .navbar-item:hover {
+        background-color: #fff;
+        border-radius: 10px;
+        transform: scale(1.1);
+      }
+/* ---------- Page heading ---------- */
+h1{
+  margin:28px 12px 8px;
+  font-size:2.8rem;
+  color:#ff0000;
+  text-shadow: 3px 3px 0 #000;
+  letter-spacing:1px;
+}
+
+/* ---------- Game scene / container ---------- */
+.container{
+  width:90%;
+  max-width:960px;
+  height:600px;              /* JS expects this space */
+  margin:36px auto;
+  background-image:url("background.jpg");
+  background-size:cover;
+  background-position:center;
+  border:5px solid #ff0000;
+  border-radius:20px;
+  overflow:hidden;
+  position:relative;         /* JS appends children here */
+  box-shadow:0 10px 35px rgba(0,0,0,0.45);
+  transition:transform .18s ease;
+}
+.container:hover{ transform:translateY(-4px) }
+
+/* ---------- Floating/animated laser dot (used by JS) ---------- */
+.laser-dot{
+  position:absolute;
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #fff 0%, #ff3b3b 25%, #b80000 60%);
+  box-shadow:0 0 8px 4px rgba(255,0,0,0.55);
+  pointer-events:none;
+  transform:translate(-50%,-50%);
+  animation:laserFade .45s linear forwards;
+}
+@keyframes laserFade{
+  from{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+  to  { opacity:0; transform:translate(-50%,-50%) scale(2); }
+}
+
+/* ---------- Stats / controls container (extra) ---------- */
+.extra{
+  width:90%;
+  max-width:960px;
+  margin:18px auto 48px;
+  padding:18px;
+  background: rgba(255,255,255,0.92);
+  border:4px solid #ff0000;
+  border-radius:14px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.25);
+}
+
+/* checkbox + label row */
+.lasercheck{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  margin-bottom:14px;
+  font-weight:700;
+  font-size:1.05rem;
+}
+
+/* hits / accuracy / misses row */
+.ps{
+  display:flex;
+  justify-content:space-around;
+  gap:10px;
+  margin-bottom:16px;
+  font-size:1.05rem;
+  color:#111;
+}
+.ps p{ margin:0; padding:6px 12px; min-width:120px; background:rgba(255,0,0,0.06); border-radius:8px }
+
+/* start button */
+#submitbtn{
+  display:block;
+  width:220px;
+  margin:0 auto;
+  padding:12px 14px;
+  background:#ff0000;
+  color:#fff;
+  border:3px solid #000;
+  border-radius:12px;
+  font-weight:800;
+  font-size:1.05rem;
+  cursor:pointer;
+  transition:all .18s ease;
+}
+#submitbtn:hover{
+  background:#fff;
+  color:#ff0000;
+  transform:scale(1.04);
+  box-shadow:0 6px 20px rgba(0,0,0,0.18);
+}
+
+/* ---------- Hidden Pokémon list (kept hidden until JS toggles) ---------- */
+#ButtonList{
+  display:none; /* preserved behavior — JS may show this */
+  width:90%;
+  max-width:960px;
+  margin:28px auto;
+  padding:14px;
+  background:rgba(255,255,255,0.95);
+  border:4px solid orange;
+  border-radius:12px;
+  box-shadow:0 8px 24px rgba(0,0,0,0.18);
+}
+
+/* ---------- Poké buttons inside ButtonList (created by JS) ---------- */
+.pokelist, .pokelist > * { box-sizing:border-box; }
+.pokelist{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  justify-content:center;
+  padding:8px;
+}
+.pokebutton{
+  flex:0 1 calc(20% - 12px);
+  min-width:140px;
+  background:#fff;
+  border:3px solid #ff0000;
+  border-radius:12px;
+  padding:10px 8px;
+  text-align:center;
+  text-transform:capitalize;
+  font-weight:800;
+  box-shadow:0 6px 18px rgba(0,0,0,0.14);
+  transition:transform .15s ease, background .15s ease, color .15s ease;
+  cursor:pointer;
+}
+.pokebutton:hover{ transform:translateY(-4px); background:#ff0000; color:#fff; }
+.pokebutton:active{ transform:translateY(0); background:darkred; color:#fff; }
+.pokebutton.clicked{ background:#2e7d32; color:#fff; border-color:#1b5e20; }
+
+/* ---------- Generic poke image class (if used by other pages or JS) ---------- */
+.pokeimg{
+  position:absolute;
+  width:var(--poke-width,64px);
+  height:auto;
+  transition: transform .6s ease-out, opacity .6s ease-out;
+}
+.pokeimg.explode{ transform:scale(3) rotate(720deg); opacity:0; filter:blur(4px); }
+
+/* ---------- Larger display area for official artwork (if you use .poke-image) ---------- */
+.poke-image{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin:28px auto;
+}
+.poke-image img{
+  width:360px;
+  height:360px;
+  object-fit:contain;
+  border-radius:14px;
+  border:5px solid #ff0000;
+  background:#fff;
+  box-shadow:0 12px 36px rgba(0,0,0,0.35);
+}
+
+/* ---------- Utility / hidden ---------- */
+.hidden{ display:none !important; }
+
+/* ---------- Responsive adjustments ---------- */
+@media (max-width:900px){
+  .pokebutton{ flex:0 1 calc(33.333% - 12px); min-width:120px }
+  .container{ height:520px }
+}
+@media (max-width:600px){
+  .pokebutton{ flex:0 1 calc(50% - 12px); min-width:100px }
+  .container{ height:440px }
+  h1{ font-size:2rem }
+}
+
+</style>
+
+
     <div class="navbar">
       <a class="navbar-item" href="index.html">Home</a>
       <a class="navbar-item" href="hunt.html">Poke Hunt</a>
@@ -133,24 +242,29 @@
       <a class="navbar-item" href="who.html">Who's That Pokemon</a>
       <a class="navbar-item" href="pokedex.html">Name The Pokedex</a>
     </div>
-    <h1>Poke Hunt!</h1>
-    <div class="container" id="scene"></div>
-    <div class="extra">
-      <div class="lasercheck">
-        <input type="checkbox" id="LasermodeBox" name="Laser" />
-        <label for="Checkbox"> Laser Mode </label>
-      </div>
-      <div class="ps">
-        <p id="hits">hits:0</p>
-        <p id="accuracy">accuracy:0</p>
-        <p id="miss">misses:0</p>
-      </div>
-      <button id="submitbtn" type="submit">Start</button>
-    </div>
 
-    <div class="pokelist" id="ButtonList">
-      <!--<div class="pokebutton">Pikachu</div>-->
-    </div>
+<h1>Poke Hunt!</h1>
+
+<div class="container" id="scene"></div>
+
+<div class="extra">
+  <div class="lasercheck">
+    <input type="checkbox" id="LasermodeBox" name="Laser" />
+    <label for="LasermodeBox"> Laser Mode </label>
+  </div>
+
+  <div class="ps">
+    <p id="hits">hits: 0</p>
+    <p id="accuracy">accuracy: 0%</p>
+    <p id="miss">misses: 0</p>
+  </div>
+
+  <button id="submitbtn" type="submit">Start</button>
+</div>
+
+<div class="pokelist" id="ButtonList">
+  <!-- Pokémon buttons will appear here -->
+</div>
 
     <script>
       const lasercheck = document.getElementById("LasermodeBox");
