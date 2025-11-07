@@ -122,3 +122,10 @@ h1 {
 .card.flipped img {
   display: block;
 }
+
+#reset-btn {
+  width: 100px;
+  height: 50px;
+  background-color: #000;
+  color: white;
+}
