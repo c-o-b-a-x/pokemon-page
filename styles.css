@@ -81,7 +81,7 @@ body {
 
 .game-grid {
   display: grid;
-  grid-template-columns: repeat(5, 300px);
+  grid-template-columns: repeat(6, 300px);
   grid-template-rows: repeat(2, 300px);
   gap: 15px;
   justify-content: center;
