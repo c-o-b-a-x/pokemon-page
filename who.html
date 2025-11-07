@@ -157,25 +157,37 @@
       let guess_count = 0;
       const guess_pokemon = document.getElementById("guess_pokemon");
       const guess_submit = document.getElementById("guess_submit");
+      const answer = document.getElementById("status");
+
+      // Autocomplete container
+      const suggestionsContainer = document.createElement("div");
+      suggestionsContainer.classList.add("suggestions");
+      guess_pokemon.appendChild(suggestionsContainer);
+
+      let allPokemon = [];
+
+      // Fetch all Pokémon names once
+      fetch("https://pokeapi.co/api/v2/pokemon?limit=898")
+        .then((res) => res.json())
+        .then((data) => {
+          allPokemon = data.results.map((p) => p.name);
+        });
 
       function getRandomPokemon() {
+        guess.classList.add("guess");
         guess_count = 0;
-
         answer.innerText = "";
         let randomId = Math.floor(Math.random() * 898) + 1;
         fetch("https://pokeapi.co/api/v2/pokemon/" + randomId)
-          .then(function (response) {
-            return response.json();
-          })
-          .then(function (pokemon) {
+          .then((response) => response.json())
+          .then((pokemon) => {
             createPokeImg(pokemon);
             name = pokemon.name;
             console.log(name);
           });
       }
-      const answer = document.getElementById("status");
+
       function createPokeImg(pokemon) {
-        guess.classList.add("guess");
         let img = document.querySelector(".guess");
         img.src = pokemon.sprites.other["official-artwork"].front_default;
         img.alt = pokemon.name;
@@ -185,17 +197,18 @@
         e.preventDefault();
         check_name(name);
       });
+
       function check_name(name) {
         const fd = new FormData(guess_pokemon);
-        let poke_guess = fd.get("pokemon");
+        let poke_guess = fd.get("pokemon").toLowerCase();
         if (poke_guess === name) {
           score += 1;
           score_container.innerText = "Score: " + score;
           answer.innerText = "CORRECT";
           guess_pokemon.reset();
           guess.classList.remove("guess");
+          suggestionsContainer.innerHTML = "";
           document.cookie = `Score=${score}; expires=${expires.toUTCString()}; path=/`;
-
           setTimeout(getRandomPokemon, 1000);
         } else {
           guess_count += 1;
@@ -203,16 +216,35 @@
           if (guess_count === 3) {
             score -= 1;
             score_container.innerText = "Score: " + score;
-
             answer.innerText = "Wrong it was " + name;
             guess_pokemon.reset();
             guess.classList.remove("guess");
+            suggestionsContainer.innerHTML = "";
             document.cookie = `Score=${score}; expires=${expires.toUTCString()}; path=/`;
-
             setTimeout(getRandomPokemon, 1000);
           }
         }
       }
+
+      // Autocomplete logic
+      guess_pokemon.addEventListener("input", function () {
+        const fd = new FormData(guess_pokemon);
+        let input = fd.get("pokemon").toLowerCase();
+        suggestionsContainer.innerHTML = "";
+        if (!input) return;
+
+        let matches = allPokemon.filter((p) => p.startsWith(input));
+        matches.slice(0, 5).forEach((match) => {
+          let div = document.createElement("div");
+          div.innerText = match;
+          div.addEventListener("click", () => {
+            guess_pokemon.querySelector('input[name="pokemon"]').value = match;
+            suggestionsContainer.innerHTML = "";
+          });
+          suggestionsContainer.appendChild(div);
+        });
+      });
+
       function getCookie(name) {
         let cookies = document.cookie.split(";");
         for (let cookie of cookies) {
@@ -221,6 +253,7 @@
         }
         return null;
       }
+
       getRandomPokemon();
     </script>
   </body>

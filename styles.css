@@ -129,3 +129,29 @@ h1 {
   background-color: #000;
   color: white;
 }
+#guess_pokemon {
+  position: relative;
+  display: inline-block;
+}
+
+.suggestions {
+  position: absolute;
+  top: 100%;
+  left: 35%;
+  transform: translateX(-50%);
+  border: 1px solid #ccc;
+  max-height: 150px;
+  overflow-y: auto;
+  background: white;
+  width: 200px;
+  z-index: 10;
+}
+
+.suggestions div {
+  padding: 5px;
+  cursor: pointer;
+}
+
+.suggestions div:hover {
+  background-color: #f0f0f0;
+}
