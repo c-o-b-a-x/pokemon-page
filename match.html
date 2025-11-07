@@ -32,7 +32,8 @@
         <div class="card card-border"><img src="" alt="" class="hidden" /></div>
         <div class="card card-border"><img src="" alt="" class="hidden" /></div>
       </div>
-      <button id="reset-btn">Reset Game</button>
+      <p id="status"></p>
+      <button id="resetBtn">Reset Game</button>
     </div>
 
     <footer class="footer">
@@ -102,13 +103,22 @@
         });
       });
 
+      let matchedCards = 0;
+
       function checkForMatch() {
         const [card1, card2] = flippedCards;
         const img1 = card1.querySelector("img").src;
         const img2 = card2.querySelector("img").src;
 
         if (img1 === img2) {
+          matchedCards += 2;
           flippedCards = [];
+
+          if (matchedCards === cards.length) {
+            console.log("win");
+            const status = document.getElementById("status");
+            status.innerText = "YOU WIN!!!";
+          }
         } else {
           lockBoard = true;
           setTimeout(() => {
@@ -121,8 +131,7 @@
           }, 1000);
         }
       }
-      const resetBtn = document.getElementById("reset-btn");
-
+      const resetBtn = document.getElementById("resetBtn");
       resetBtn.addEventListener("click", () => {
         cards.forEach((card) => {
           card.classList.remove("flipped");
@@ -130,7 +139,11 @@
         });
 
         flippedCards = [];
+        matchedCards = 0;
         lockBoard = false;
+
+        const status = document.getElementById("status");
+        status.innerText = "";
 
         loadPokemonImages();
       });
