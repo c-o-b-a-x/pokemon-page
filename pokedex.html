@@ -4,52 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Guess The Pokedex</title>
+    <link rel="stylesheet" href="styles.css" />
     <style>
-      body {
-        margin: 0;
-        font-family: "Trebuchet MS", sans-serif;
-        min-height: 100vh;
-        background: linear-gradient(180deg, #ffcb05, #3b4cca);
-        background-attachment: fixed;
-        background-repeat: no-repeat;
-        background-size: cover;
-        color: #222;
-        text-align: center;
-      }
-
-      .navbar {
-        background-color: #ff0000;
-        border-bottom: 3px solid black;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 10px;
-        position: sticky;
-        top: 0;
-        z-index: 10;
-      }
-
-      .navbar-item {
-        text-decoration: none;
-        font-size: 1.5em;
-        color: black;
-        padding: 10px 20px;
-        margin: 0 10px;
-        transition: 0.3s;
-      }
-
-      .navbar-item:hover {
-        background-color: #fff;
-        border-radius: 10px;
-        transform: scale(1.1);
-      }
-
       /* Center and layout */
-      .center {
-        display: block;
-        margin: 0 auto;
-        text-align: center;
-      }
 
       /* Image and form styling */
       .guess {
@@ -115,10 +72,11 @@
       <a class="navbar-item" href="list.html">Pokemon List</a>
       <a class="navbar-item" href="who.html">Who's That Pokemon</a>
       <a class="navbar-item" href="pokedex.html">Name The Pokedex</a>
+      <a class="navbar-item" href="match.html">Pokemon Matching Game</a>
     </div>
 
     <div class="container center">
-      <h1 class="center border">Name The Pokedex</h1>
+      <h1 class="center">Name The Pokedex</h1>
       <p id="id">id:0</p>
       <img class="guess center" id="guess" src="" alt="" />
     </div>
@@ -131,7 +89,22 @@
       </form>
       <p id="status"></p>
     </div>
-
+    <footer class="footer">
+      <div>
+        <p>Developed By Coby Hughes</p>
+        <a
+          href="https://github.com/c-o-b-a-x"
+          target="_blank"
+          class="github-link"
+        >
+          <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
+            alt="GitHub Logo"
+            class="github-logo"
+          />
+        </a>
+      </div>
+    </footer>
     <script>
       let restart = document.getElementById("restart");
       let img = document.querySelector(".guess");

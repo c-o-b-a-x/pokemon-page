@@ -4,20 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Who's That Pokemon</title>
+    <link rel="stylesheet" href="styles.css" />
     <style>
       /* --- Base Styles --- */
-      html,
-      body {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        font-family: "Trebuchet MS", sans-serif;
-        background: linear-gradient(180deg, #ffcb05, #3b4cca);
-        background-attachment: fixed;
-        background-size: cover;
-        color: #111;
-        text-align: center;
-      }
 
       h1 {
         color: #ff0000;
@@ -26,35 +15,6 @@
         margin-top: 40px;
       }
 
-      /* --- Navbar --- */
-      .navbar {
-        background-color: #ff0000;
-        border-bottom: 3px solid black;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 10px;
-        position: sticky;
-        top: 0;
-        z-index: 10;
-      }
-
-      .navbar-item {
-        text-decoration: none;
-        font-size: 1.5em;
-        color: black;
-        padding: 10px 20px;
-        margin: 0 10px;
-        transition: 0.3s;
-      }
-
-      .navbar-item:hover {
-        background-color: #fff;
-        border-radius: 10px;
-        transform: scale(1.1);
-      }
-
-      /* --- Container for game --- */
       .container {
         background: rgba(255, 255, 255, 0.85);
         border: 5px solid #ff0000;
@@ -152,10 +112,11 @@
       <a class="navbar-item" href="list.html">Pokemon List</a>
       <a class="navbar-item" href="who.html">Who's That Pokemon</a>
       <a class="navbar-item" href="pokedex.html">Name The Pokedex</a>
+      <a class="navbar-item" href="match.html">Pokemon Matching Game</a>
     </div>
+    <h1 class="center border">Who's That Pokemon</h1>
 
     <div class="container center">
-      <h1 class="center border">Who's That Pokemon</h1>
       <p id="score">Score:0</p>
       <img class="guess center" id="guess" src="" alt="" />
     </div>
@@ -167,7 +128,22 @@
       </form>
       <p id="status"></p>
     </div>
-
+    <footer class="footer">
+      <div>
+        <p>Developed By Coby Hughes</p>
+        <a
+          href="https://github.com/c-o-b-a-x"
+          target="_blank"
+          class="github-link"
+        >
+          <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
+            alt="GitHub Logo"
+            class="github-logo"
+          />
+        </a>
+      </div>
+    </footer>
     <script>
       let score_container = document.getElementById("score");
       let saved_score = getCookie("Score");

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <style></style>
+  <body>
+    <div class="navbar">
+      <a class="navbar-item" href="index.html">Home</a>
+      <a class="navbar-item" href="hunt.html">Poke Hunt</a>
+      <a class="navbar-item" href="list.html">Pokemon List</a>
+      <a class="navbar-item" href="who.html">Who's That Pokemon</a>
+      <a class="navbar-item" href="pokedex.html">Name The Pokedex</a>
+      <a class="navbar-item" href="match.html">Pokemon Matching Game</a>
+    </div>
+    <div><h1>Match The Pokemon</h1></div>
+    <div class="main-content">
+      <div class="game-grid">
+        <div class="card card-border"><img src="" alt="" class="hidden" /></div>
+        <div class="card card-border"><img src="" alt="" class="hidden" /></div>
+        <div class="card card-border"><img src="" alt="" class="hidden" /></div>
+        <div class="card card-border"><img src="" alt="" class="hidden" /></div>
+        <div class="card card-border"><img src="" alt="" class="hidden" /></div>
+        <div class="card card-border"><img src="" alt="" class="hidden" /></div>
+        <div class="card card-border"><img src="" alt="" class="hidden" /></div>
+        <div class="card card-border"><img src="" alt="" class="hidden" /></div>
+        <div class="card card-border"><img src="" alt="" class="hidden" /></div>
+        <div class="card card-border"><img src="" alt="" class="hidden" /></div>
+      </div>
+      <button id="reset-btn">Reset Game</button>
+    </div>
+
+    <footer class="footer">
+      <div>
+        <p>Developed By Coby Hughes</p>
+        <a
+          href="https://github.com/c-o-b-a-x"
+          target="_blank"
+          class="github-link"
+        >
+          <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
+            alt="GitHub Logo"
+            class="github-logo"
+          />
+        </a>
+      </div>
+    </footer>
+    <script>
+      const cards = document.querySelectorAll(".card");
+      let flippedCards = [];
+      let lockBoard = false;
+
+      async function loadPokemonImages() {
+        let pokemonImages = [];
+
+        for (let i = 0; i < 5; i++) {
+          const randomId = Math.floor(Math.random() * 898) + 1;
+          const res = await fetch(
+            `https://pokeapi.co/api/v2/pokemon/${randomId}`
+          );
+          const data = await res.json();
+          pokemonImages.push(
+            data.sprites.other["official-artwork"].front_default
+          );
+        }
+
+        pokemonImages = [...pokemonImages, ...pokemonImages];
+
+        for (let i = pokemonImages.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [pokemonImages[i], pokemonImages[j]] = [
+            pokemonImages[j],
+            pokemonImages[i],
+          ];
+        }
+
+        cards.forEach((card, index) => {
+          const img = card.querySelector("img");
+          img.src = pokemonImages[index];
+          img.alt = "Pokemon";
+        });
+      }
+
+      cards.forEach((card) => {
+        card.addEventListener("click", () => {
+          if (lockBoard) return;
+          if (card.classList.contains("flipped")) return;
+
+          card.classList.add("flipped");
+          card.querySelector("img").classList.remove("hidden");
+          flippedCards.push(card);
+
+          if (flippedCards.length === 2) {
+            checkForMatch();
+          }
+        });
+      });
+
+      function checkForMatch() {
+        const [card1, card2] = flippedCards;
+        const img1 = card1.querySelector("img").src;
+        const img2 = card2.querySelector("img").src;
+
+        if (img1 === img2) {
+          flippedCards = [];
+        } else {
+          lockBoard = true;
+          setTimeout(() => {
+            flippedCards.forEach((card) => {
+              card.classList.remove("flipped");
+              card.querySelector("img").classList.add("hidden");
+            });
+            flippedCards = [];
+            lockBoard = false;
+          }, 1000);
+        }
+      }
+      const resetBtn = document.getElementById("reset-btn");
+
+      resetBtn.addEventListener("click", () => {
+        cards.forEach((card) => {
+          card.classList.remove("flipped");
+          card.querySelector("img").classList.add("hidden");
+        });
+
+        flippedCards = [];
+        lockBoard = false;
+
+        loadPokemonImages();
+      });
+
+      loadPokemonImages();
+    </script>
+  </body>
+</html>

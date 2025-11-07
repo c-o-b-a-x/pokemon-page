@@ -6,418 +6,451 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pokémon | Hunt</title>
+    <link rel="stylesheet" href="styles.css" />
     <style>
-/* ---------- Global / body ---------- */
-      body,
-      html {
-        margin: 0;
-        padding: 0;
-        height: 100%;
+      /* ---------- Global / body ---------- */
+
+      /* ---------- Navbar ---------- */
+
+      /* ---------- Page heading ---------- */
+      h1 {
+        margin: 28px 12px 8px;
+        font-size: 2.8rem;
+        color: #ff0000;
+        text-shadow: 3px 3px 0 #000;
+        letter-spacing: 1px;
       }
 
-      body {
-        font-family: "Trebuchet MS", sans-serif;
-        color: #222;
-        text-align: center;
-        /* Full-page gradient that stretches with content */
-        background: linear-gradient(180deg, #ffcb05, #3b4cca);
-        background-attachment: fixed; /* keeps the gradient static instead of repeating */
-        background-repeat: no-repeat;
+      /* ---------- Game scene / container ---------- */
+      .container {
+        width: 90%;
+        max-width: 960px;
+        height: 600px;
+        margin: 36px auto;
+        background-image: url("background.jpg");
         background-size: cover;
+        background-position: center;
+        border: 5px solid #ff0000;
+        border-radius: 20px;
+        overflow: hidden;
+        position: relative; /* JS appends children here */
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.45);
+        transition: transform 0.18s ease;
       }
-/* ---------- Navbar ---------- */
-  .navbar {
-        background-color: #ff0000;
-        border-bottom: 3px solid black;
+      .container:hover {
+        transform: translateY(-4px);
+      }
+
+      /* ---------- Floating/animated laser dot (used by JS) ---------- */
+      .laser-dot {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 35% 30%,
+          #fff 0%,
+          #ff3b3b 25%,
+          #b80000 60%
+        );
+        box-shadow: 0 0 8px 4px rgba(255, 0, 0, 0.55);
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+        animation: laserFade 0.45s linear forwards;
+      }
+      @keyframes laserFade {
+        from {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1);
+        }
+        to {
+          opacity: 0;
+          transform: translate(-50%, -50%) scale(2);
+        }
+      }
+
+      /* ---------- Stats / controls container (extra) ---------- */
+      .extra {
+        width: 90%;
+        max-width: 960px;
+        margin: 18px auto 48px;
+        padding: 18px;
+        background: rgba(255, 255, 255, 0.92);
+        border: 4px solid #ff0000;
+        border-radius: 14px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+      }
+
+      /* checkbox + label row */
+      .lasercheck {
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 10px;
-        position: sticky;
-        top: 0;
-        z-index: 100;
+        gap: 10px;
+        margin-bottom: 14px;
+        font-weight: 700;
+        font-size: 1.05rem;
       }
 
-      .navbar-item {
-        text-decoration: none;
-        font-size: 1.5em;
-        color: black;
-        padding: 10px 20px;
-        margin: 0 10px;
-        transition: 0.3s;
+      /* hits / accuracy / misses row */
+      .ps {
+        display: flex;
+        justify-content: space-around;
+        gap: 10px;
+        margin-bottom: 16px;
+        font-size: 1.05rem;
+        color: #111;
+      }
+      .ps p {
+        margin: 0;
+        padding: 6px 12px;
+        min-width: 120px;
+        background: rgba(255, 0, 0, 0.06);
+        border-radius: 8px;
       }
 
-      .navbar-item:hover {
-        background-color: #fff;
-        border-radius: 10px;
-        transform: scale(1.1);
+      /* start button */
+      #submitbtn {
+        display: block;
+        width: 220px;
+        margin: 0 auto;
+        padding: 12px 14px;
+        background: #ff0000;
+        color: #fff;
+        border: 3px solid #000;
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 1.05rem;
+        cursor: pointer;
+        transition: all 0.18s ease;
       }
-/* ---------- Page heading ---------- */
-h1{
-  margin:28px 12px 8px;
-  font-size:2.8rem;
-  color:#ff0000;
-  text-shadow: 3px 3px 0 #000;
-  letter-spacing:1px;
-}
-
-/* ---------- Game scene / container ---------- */
-.container{
-  width:90%;
-  max-width:960px;
-  height:600px;              /* JS expects this space */
-  margin:36px auto;
-  background-image:url("background.jpg");
-  background-size:cover;
-  background-position:center;
-  border:5px solid #ff0000;
-  border-radius:20px;
-  overflow:hidden;
-  position:relative;         /* JS appends children here */
-  box-shadow:0 10px 35px rgba(0,0,0,0.45);
-  transition:transform .18s ease;
-}
-.container:hover{ transform:translateY(-4px) }
-
-/* ---------- Floating/animated laser dot (used by JS) ---------- */
-.laser-dot{
-  position:absolute;
-  width:10px;
-  height:10px;
-  border-radius:50%;
-  background:radial-gradient(circle at 35% 30%, #fff 0%, #ff3b3b 25%, #b80000 60%);
-  box-shadow:0 0 8px 4px rgba(255,0,0,0.55);
-  pointer-events:none;
-  transform:translate(-50%,-50%);
-  animation:laserFade .45s linear forwards;
-}
-@keyframes laserFade{
-  from{ opacity:1; transform:translate(-50%,-50%) scale(1); }
-  to  { opacity:0; transform:translate(-50%,-50%) scale(2); }
-}
-
-/* ---------- Stats / controls container (extra) ---------- */
-.extra{
-  width:90%;
-  max-width:960px;
-  margin:18px auto 48px;
-  padding:18px;
-  background: rgba(255,255,255,0.92);
-  border:4px solid #ff0000;
-  border-radius:14px;
-  box-shadow:0 8px 30px rgba(0,0,0,0.25);
-}
-
-/* checkbox + label row */
-.lasercheck{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:10px;
-  margin-bottom:14px;
-  font-weight:700;
-  font-size:1.05rem;
-}
-
-/* hits / accuracy / misses row */
-.ps{
-  display:flex;
-  justify-content:space-around;
-  gap:10px;
-  margin-bottom:16px;
-  font-size:1.05rem;
-  color:#111;
-}
-.ps p{ margin:0; padding:6px 12px; min-width:120px; background:rgba(255,0,0,0.06); border-radius:8px }
-
-/* start button */
-#submitbtn{
-  display:block;
-  width:220px;
-  margin:0 auto;
-  padding:12px 14px;
-  background:#ff0000;
-  color:#fff;
-  border:3px solid #000;
-  border-radius:12px;
-  font-weight:800;
-  font-size:1.05rem;
-  cursor:pointer;
-  transition:all .18s ease;
-}
-#submitbtn:hover{
-  background:#fff;
-  color:#ff0000;
-  transform:scale(1.04);
-  box-shadow:0 6px 20px rgba(0,0,0,0.18);
-}
-
-/* ---------- Hidden Pokémon list (kept hidden until JS toggles) ---------- */
-#ButtonList{
-  display:none; /* preserved behavior — JS may show this */
-  width:90%;
-  max-width:960px;
-  margin:28px auto;
-  padding:14px;
-  background:rgba(255,255,255,0.95);
-  border:4px solid orange;
-  border-radius:12px;
-  box-shadow:0 8px 24px rgba(0,0,0,0.18);
-}
-
-/* ---------- Poké buttons inside ButtonList (created by JS) ---------- */
-.pokelist, .pokelist > * { box-sizing:border-box; }
-.pokelist{
-  display:flex;
-  flex-wrap:wrap;
-  gap:12px;
-  justify-content:center;
-  padding:8px;
-}
-.pokebutton{
-  flex:0 1 calc(20% - 12px);
-  min-width:140px;
-  background:#fff;
-  border:3px solid #ff0000;
-  border-radius:12px;
-  padding:10px 8px;
-  text-align:center;
-  text-transform:capitalize;
-  font-weight:800;
-  box-shadow:0 6px 18px rgba(0,0,0,0.14);
-  transition:transform .15s ease, background .15s ease, color .15s ease;
-  cursor:pointer;
-}
-.pokebutton:hover{ transform:translateY(-4px); background:#ff0000; color:#fff; }
-.pokebutton:active{ transform:translateY(0); background:darkred; color:#fff; }
-.pokebutton.clicked{ background:#2e7d32; color:#fff; border-color:#1b5e20; }
-
-/* ---------- Generic poke image class (if used by other pages or JS) ---------- */
-.pokeimg{
-  position:absolute;
-  width:var(--poke-width,64px);
-  height:auto;
-  transition: transform .6s ease-out, opacity .6s ease-out;
-}
-.pokeimg.explode{ transform:scale(3) rotate(720deg); opacity:0; filter:blur(4px); }
-
-/* ---------- Larger display area for official artwork (if you use .poke-image) ---------- */
-.poke-image{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  margin:28px auto;
-}
-.poke-image img{
-  width:360px;
-  height:360px;
-  object-fit:contain;
-  border-radius:14px;
-  border:5px solid #ff0000;
-  background:#fff;
-  box-shadow:0 12px 36px rgba(0,0,0,0.35);
-}
-
-/* ---------- Utility / hidden ---------- */
-.hidden{ display:none !important; }
-
-/* ---------- Responsive adjustments ---------- */
-@media (max-width:900px){
-  .pokebutton{ flex:0 1 calc(33.333% - 12px); min-width:120px }
-  .container{ height:520px }
-}
-@media (max-width:600px){
-  .pokebutton{ flex:0 1 calc(50% - 12px); min-width:100px }
-  .container{ height:440px }
-  h1{ font-size:2rem }
-}
-
-</style>
-
-
-    <div class="navbar">
-      <a class="navbar-item" href="index.html">Home</a>
-      <a class="navbar-item" href="hunt.html">Poke Hunt</a>
-      <a class="navbar-item" href="list.html">Pokemon List</a>
-      <a class="navbar-item" href="who.html">Who's That Pokemon</a>
-      <a class="navbar-item" href="pokedex.html">Name The Pokedex</a>
-    </div>
-
-<h1>Poke Hunt!</h1>
-
-<div class="container" id="scene"></div>
-
-<div class="extra">
-  <div class="lasercheck">
-    <input type="checkbox" id="LasermodeBox" name="Laser" />
-    <label for="LasermodeBox"> Laser Mode </label>
-  </div>
-
-  <div class="ps">
-    <p id="hits">hits: 0</p>
-    <p id="accuracy">accuracy: 0%</p>
-    <p id="miss">misses: 0</p>
-  </div>
-
-  <button id="submitbtn" type="submit">Start</button>
-</div>
-
-<div class="pokelist" id="ButtonList">
-  <!-- Pokémon buttons will appear here -->
-</div>
-
-    <script>
-      const lasercheck = document.getElementById("LasermodeBox");
-      const misses = document.getElementById("miss");
-      const hit = document.getElementById("hits");
-      const accuracy = document.getElementById("accuracy");
-
-      const buttonList = document.getElementById("ButtonList");
-      function createPokeButton(pokerecord) {
-        let pokediv = document.createElement("div");
-        pokediv.classList.add("pokebutton");
-        pokediv.dataset.url = pokerecord.url;
-        pokediv.innerHTML = pokerecord.name;
-        return pokediv;
-      }
-      function createPokeImg(pokemon) {
-        const pokeimg = document.createElement("img");
-        pokeimg.src = pokemon.sprites.other["official-artwork"].front_default;
-        pokeimg.classList.add("pokeimg");
-        pokeimg.style.left = getRandomInt(0, scene.clientWidth - 80) + "px";
-        pokeimg.dataset.top = -80;
-        pokeimg.style.top = pokeimg.dataset.top + "px";
-        pokeimg.dataset.cry = pokemon.cries.latest;
-        return pokeimg;
-      }
-      let total = 0;
-      let hits = 0;
-      let miss = 0;
-      function getRandomInt(min, max) {
-        min = Math.ceil(min);
-        max = Math.floor(max);
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-      }
-      function pokehit(event) {
-        this.removeEventListener("click", pokehit);
-        this.removeEventListener("mouseover", pokehit);
-        this.classList.add("explode");
-        let cry = new Audio(this.dataset.cry);
-        cry.play();
-
-        hits += 1;
-        hit.textContent = "hits:" + hits;
-        console.log(hits);
-        total += 1;
-        accuracy.textContent = "average:" + (hits / total) * 100 + "%";
-        return;
+      #submitbtn:hover {
+        background: #fff;
+        color: #ff0000;
+        transform: scale(1.04);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
       }
 
-      function dropPoke(url) {
-        fetch(url)
-          .then((response) => response.json())
-          .then((data) => {
-            console.log(data);
-            let poke = createPokeImg(data);
-            scene.append(poke);
-
-            function updatePokeListener() {
-              if (lasercheck.checked) {
-                poke.removeEventListener("click", pokehit);
-
-                poke.addEventListener("mouseover", pokehit);
-              } else {
-                poke.addEventListener("click", pokehit);
-                poke.removeEventListener("mouseover", pokehit);
-              }
-            }
-
-            updatePokeListener();
-
-            lasercheck.addEventListener("click", updatePokeListener);
-
-            let interval = setInterval(function () {
-              let top = Number(poke.dataset.top);
-              top += 1;
-              poke.dataset.top = top;
-              poke.style.top = poke.dataset.top + "px";
-
-              if (top > scene.clientHeight) {
-                clearInterval(interval);
-                poke.remove();
-                if (!poke.classList.contains("explode")) {
-                  miss += 1;
-                }
-                total += 1;
-                console.log(miss);
-                misses.textContent = "misses:" + miss;
-                accuracy.textContent = "average:" + (hits / total) * 100 + "%";
-              }
-            }, 20);
-          });
+      /* ---------- Hidden Pokémon list (kept hidden until JS toggles) ---------- */
+      #ButtonList {
+        display: none; /* preserved behavior — JS may show this */
+        width: 90%;
+        max-width: 960px;
+        margin: 28px auto;
+        padding: 14px;
+        background: rgba(255, 255, 255, 0.95);
+        border: 4px solid orange;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
       }
 
-      /*GPT'd  the laser*/
-      function lasermode(e) {
-        const rect = scene.getBoundingClientRect();
-        // ignore events outside the scene (e.g., when moving fast)
-        if (
-          e.clientX < rect.left ||
-          e.clientX > rect.right ||
-          e.clientY < rect.top ||
-          e.clientY > rect.bottom
-        )
-          return;
-
-        const dot = document.createElement("div");
-        dot.className = "laser-dot";
-        dot.style.left = `${e.clientX - rect.left}px`;
-        dot.style.top = `${e.clientY - rect.top}px`;
-        scene.appendChild(dot);
-
-        dot.addEventListener("animationend", () => dot.remove());
+      /* ---------- Poké buttons inside ButtonList (created by JS) ---------- */
+      .pokelist,
+      .pokelist > * {
+        box-sizing: border-box;
+      }
+      .pokelist {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: center;
+        padding: 8px;
+      }
+      .pokebutton {
+        flex: 0 1 calc(20% - 12px);
+        min-width: 140px;
+        background: #fff;
+        border: 3px solid #ff0000;
+        border-radius: 12px;
+        padding: 10px 8px;
+        text-align: center;
+        text-transform: capitalize;
+        font-weight: 800;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
+        transition: transform 0.15s ease, background 0.15s ease,
+          color 0.15s ease;
+        cursor: pointer;
+      }
+      .pokebutton:hover {
+        transform: translateY(-4px);
+        background: #ff0000;
+        color: #fff;
+      }
+      .pokebutton:active {
+        transform: translateY(0);
+        background: darkred;
+        color: #fff;
+      }
+      .pokebutton.clicked {
+        background: #2e7d32;
+        color: #fff;
+        border-color: #1b5e20;
       }
 
-      buttonList.addEventListener("click", (event) => {
-        const element = event.target.closest(".pokebutton");
-        const scene = document.getElementById("scene");
-        element.classList.add("clicked");
-        let url = element.dataset.url;
-        //console.log(url);
-      });
+      /* ---------- Generic poke image class (if used by other pages or JS) ---------- */
+      .pokeimg {
+        position: absolute;
+        width: var(--poke-width, 64px);
+        height: auto;
+        transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+      }
+      .pokeimg.explode {
+        transform: scale(3) rotate(720deg);
+        opacity: 0;
+        filter: blur(4px);
+      }
 
-      function start() {
-        //fetch GET request:
-        fetch("https://pokeapi.co/api/v2/pokemon/?limit=2000")
-          .then((response) => response.json())
-          .then((data) => {
-            console.log(data);
-            console.log(data.results);
-            for (pokemon of data.results) {
-              //console.log(pokemon);
-              buttonList.append(createPokeButton(pokemon));
-            }
-            const submitbtn = document.getElementById("submitbtn");
-            submitbtn.addEventListener("click", function () {
-              let pokelist = data.results;
-              let game = setInterval(function () {
-                let idx = Math.floor(Math.random() * pokelist.length);
-                let poke = pokelist[idx];
-                pokelist.splice(idx, 1);
-                dropPoke(poke.url);
-              }, 1200);
-            });
-          });
-        lasercheck.addEventListener("click", () => {
-          if (lasercheck.checked) {
-            scene.addEventListener("mousemove", lasermode);
-          } else {
-            scene.removeEventListener("mousemove", lasermode);
+      /* ---------- Larger display area for official artwork (if you use .poke-image) ---------- */
+      .poke-image {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 28px auto;
+      }
+      .poke-image img {
+        width: 360px;
+        height: 360px;
+        object-fit: contain;
+        border-radius: 14px;
+        border: 5px solid #ff0000;
+        background: #fff;
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+      }
+
+      /* ---------- Utility / hidden ---------- */
+      .hidden {
+        display: none !important;
+      }
+
+      /* ---------- Responsive adjustments ---------- */
+      @media (max-width: 900px) {
+        .pokebutton {
+          flex: 0 1 calc(33.333% - 12px);
+          min-width: 120px;
+        }
+        .container {
+          height: 520px;
+        }
+      }
+      @media (max-width: 600px) {
+        .pokebutton {
+          flex: 0 1 calc(50% - 12px);
+          min-width: 100px;
+        }
+        .container {
+          height: 440px;
+        }
+        h1 {
+          font-size: 2rem;
+        }
+      }
+    </style>
+    <html>
+      <body>
+        <div class="navbar">
+          <a class="navbar-item" href="index.html">Home</a>
+          <a class="navbar-item" href="hunt.html">Poke Hunt</a>
+          <a class="navbar-item" href="list.html">Pokemon List</a>
+          <a class="navbar-item" href="who.html">Who's That Pokemon</a>
+          <a class="navbar-item" href="pokedex.html">Name The Pokedex</a>
+          <a class="navbar-item" href="match.html">Pokemon Matching Game</a>
+        </div>
+
+        <h1>Poke Hunt!</h1>
+
+        <div class="container" id="scene"></div>
+
+        <div class="extra">
+          <div class="lasercheck">
+            <input type="checkbox" id="LasermodeBox" name="Laser" />
+            <label for="LasermodeBox"> Laser Mode </label>
+          </div>
+
+          <div class="ps">
+            <p id="hits">hits: 0</p>
+            <p id="accuracy">accuracy: 0%</p>
+            <p id="miss">misses: 0</p>
+          </div>
+
+          <button id="submitbtn" type="submit">Start</button>
+        </div>
+
+        <div class="pokelist" id="ButtonList">
+          <!-- Pokémon buttons will appear here -->
+        </div>
+        <footer class="footer">
+          <div>
+            <p>Developed By Coby Hughes</p>
+            <a
+              href="https://github.com/c-o-b-a-x"
+              target="_blank"
+              class="github-link"
+            >
+              <img
+                src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
+                alt="GitHub Logo"
+                class="github-logo"
+              />
+            </a>
+          </div>
+        </footer>
+
+        <script>
+          const lasercheck = document.getElementById("LasermodeBox");
+          const misses = document.getElementById("miss");
+          const hit = document.getElementById("hits");
+          const accuracy = document.getElementById("accuracy");
+
+          const buttonList = document.getElementById("ButtonList");
+          function createPokeButton(pokerecord) {
+            let pokediv = document.createElement("div");
+            pokediv.classList.add("pokebutton");
+            pokediv.dataset.url = pokerecord.url;
+            pokediv.innerHTML = pokerecord.name;
+            return pokediv;
           }
-        });
-      }
+          function createPokeImg(pokemon) {
+            const pokeimg = document.createElement("img");
+            pokeimg.src =
+              pokemon.sprites.other["official-artwork"].front_default;
+            pokeimg.classList.add("pokeimg");
+            pokeimg.style.left = getRandomInt(0, scene.clientWidth - 80) + "px";
+            pokeimg.dataset.top = -80;
+            pokeimg.style.top = pokeimg.dataset.top + "px";
+            pokeimg.dataset.cry = pokemon.cries.latest;
+            return pokeimg;
+          }
+          let total = 0;
+          let hits = 0;
+          let miss = 0;
+          function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+          }
+          function pokehit(event) {
+            this.removeEventListener("click", pokehit);
+            this.removeEventListener("mouseover", pokehit);
+            this.classList.add("explode");
+            let cry = new Audio(this.dataset.cry);
+            cry.play();
 
-      start();
-    </script>
-  </body>
+            hits += 1;
+            hit.textContent = "hits:" + hits;
+            console.log(hits);
+            total += 1;
+            accuracy.textContent = "average:" + (hits / total) * 100 + "%";
+            return;
+          }
+
+          function dropPoke(url) {
+            fetch(url)
+              .then((response) => response.json())
+              .then((data) => {
+                console.log(data);
+                let poke = createPokeImg(data);
+                scene.append(poke);
+
+                function updatePokeListener() {
+                  if (lasercheck.checked) {
+                    poke.removeEventListener("click", pokehit);
+
+                    poke.addEventListener("mouseover", pokehit);
+                  } else {
+                    poke.addEventListener("click", pokehit);
+                    poke.removeEventListener("mouseover", pokehit);
+                  }
+                }
+
+                updatePokeListener();
+
+                lasercheck.addEventListener("click", updatePokeListener);
+
+                let interval = setInterval(function () {
+                  let top = Number(poke.dataset.top);
+                  top += 1;
+                  poke.dataset.top = top;
+                  poke.style.top = poke.dataset.top + "px";
+
+                  if (top > scene.clientHeight) {
+                    clearInterval(interval);
+                    poke.remove();
+                    if (!poke.classList.contains("explode")) {
+                      miss += 1;
+                    }
+                    total += 1;
+                    console.log(miss);
+                    misses.textContent = "misses:" + miss;
+                    accuracy.textContent =
+                      "average:" + (hits / total) * 100 + "%";
+                  }
+                }, 20);
+              });
+          }
+
+          /*GPT'd  the laser*/
+          function lasermode(e) {
+            const rect = scene.getBoundingClientRect();
+            // ignore events outside the scene (e.g., when moving fast)
+            if (
+              e.clientX < rect.left ||
+              e.clientX > rect.right ||
+              e.clientY < rect.top ||
+              e.clientY > rect.bottom
+            )
+              return;
+
+            const dot = document.createElement("div");
+            dot.className = "laser-dot";
+            dot.style.left = `${e.clientX - rect.left}px`;
+            dot.style.top = `${e.clientY - rect.top}px`;
+            scene.appendChild(dot);
+
+            dot.addEventListener("animationend", () => dot.remove());
+          }
+
+          buttonList.addEventListener("click", (event) => {
+            const element = event.target.closest(".pokebutton");
+            const scene = document.getElementById("scene");
+            element.classList.add("clicked");
+            let url = element.dataset.url;
+            //console.log(url);
+          });
+
+          function start() {
+            //fetch GET request:
+            fetch("https://pokeapi.co/api/v2/pokemon/?limit=2000")
+              .then((response) => response.json())
+              .then((data) => {
+                console.log(data);
+                console.log(data.results);
+                for (pokemon of data.results) {
+                  //console.log(pokemon);
+                  buttonList.append(createPokeButton(pokemon));
+                }
+                const submitbtn = document.getElementById("submitbtn");
+                submitbtn.addEventListener("click", function () {
+                  let pokelist = data.results;
+                  let game = setInterval(function () {
+                    let idx = Math.floor(Math.random() * pokelist.length);
+                    let poke = pokelist[idx];
+                    pokelist.splice(idx, 1);
+                    dropPoke(poke.url);
+                  }, 1200);
+                });
+              });
+            lasercheck.addEventListener("click", () => {
+              if (lasercheck.checked) {
+                scene.addEventListener("mousemove", lasermode);
+              } else {
+                scene.removeEventListener("mousemove", lasermode);
+              }
+            });
+          }
+
+          start();
+        </script>
+      </body>
+    </html>
+  </head>
 </html>
