@@ -79,7 +79,7 @@ body {
   opacity: 0.8;
 }
 
-.game-grid {
+#grid {
   display: grid;
   grid-template-columns: repeat(6, 300px);
   grid-template-rows: repeat(2, 300px);

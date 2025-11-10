@@ -18,7 +18,25 @@
     </div>
     <div><h1>Match The Pokemon</h1></div>
     <div class="main-content">
-      <div class="game-grid">
+      <div class="card_count">
+        <button id="12">12 Cards</button>
+        <button id="24">24 Cards</button>
+      </div>
+      <div id="timer">Time Remaining:</div>
+
+      <div class="game-grid" id="grid">
+        <div class="card card-border"><img src="" alt="" class="hidden" /></div>
+        <div class="card card-border"><img src="" alt="" class="hidden" /></div>
+        <div class="card card-border"><img src="" alt="" class="hidden" /></div>
+        <div class="card card-border"><img src="" alt="" class="hidden" /></div>
+        <div class="card card-border"><img src="" alt="" class="hidden" /></div>
+        <div class="card card-border"><img src="" alt="" class="hidden" /></div>
+        <div class="card card-border"><img src="" alt="" class="hidden" /></div>
+        <div class="card card-border"><img src="" alt="" class="hidden" /></div>
+        <div class="card card-border"><img src="" alt="" class="hidden" /></div>
+        <div class="card card-border"><img src="" alt="" class="hidden" /></div>
+        <div class="card card-border"><img src="" alt="" class="hidden" /></div>
+        <div class="card card-border"><img src="" alt="" class="hidden" /></div>
         <div class="card card-border"><img src="" alt="" class="hidden" /></div>
         <div class="card card-border"><img src="" alt="" class="hidden" /></div>
         <div class="card card-border"><img src="" alt="" class="hidden" /></div>
@@ -53,18 +71,60 @@
       </div>
     </footer>
     <script>
+      let time = 30;
+      let id = 6;
+      let count = 0;
+      const time_display = document.getElementById("timer");
+      const grid = document.getElementById("grid");
+      const twelve = document.getElementById("12");
+      const twentyfour = document.getElementById("24");
+
+      function reset() {
+        cards.forEach((card) => {
+          card.classList.remove("flipped");
+          card.querySelector("img").classList.add("hidden");
+        });
+
+        flippedCards = [];
+        matchedCards = 0;
+        lockBoard = false;
+
+        const status = document.getElementById("status");
+        status.innerText = "";
+        time = id * 5;
+        loadPokemonImages();
+      }
+
+      twentyfour.addEventListener("click", () => {
+        time = 30;
+        grid.style.gridTemplateColumns = "repeat(6, 200px)";
+        grid.style.gridTemplateRows = "repeat(4, 200px)";
+        id = 12;
+        timer(id);
+        reset();
+      });
+      twelve.addEventListener("click", () => {
+        time = 20;
+
+        grid.style.gridTemplateColumns = "repeat(6, 300px)";
+        grid.style.gridTemplateRows = "repeat(2, 300px)";
+
+        id = 6;
+        timer(id);
+        reset();
+      });
       const cards = document.querySelectorAll(".card");
       let flippedCards = [];
       let lockBoard = false;
 
       async function loadPokemonImages() {
         let pokemonImages = [];
-
-        for (let i = 0; i < 6; i++) {
+        for (let i = 0; i < Number(id); i++) {
           const randomId = Math.floor(Math.random() * 898) + 1;
           const res = await fetch(
             `https://pokeapi.co/api/v2/pokemon/${randomId}`
           );
+          console.log(res);
           const data = await res.json();
           pokemonImages.push(
             data.sprites.other["official-artwork"].front_default
@@ -94,7 +154,9 @@
           if (card.classList.contains("flipped")) return;
 
           card.classList.add("flipped");
-          card.querySelector("img").classList.remove("hidden");
+          for (let i = 0; i < id; i++) {
+            card.querySelector("img").classList.remove("hidden");
+          }
           flippedCards.push(card);
 
           if (flippedCards.length === 2) {
@@ -102,6 +164,27 @@
           }
         });
       });
+      let timerInterval;
+
+      function timer(id) {
+        clearInterval(timerInterval);
+        timerInterval = setInterval(function () {
+          time_display.innerText = "Time Remaining: " + time;
+          time -= 1;
+          if (time <= 0) {
+            time = 0;
+            clearInterval(timerInterval);
+            count = 0;
+            cards.forEach((card) => {
+              if (count < id * 2) {
+                const img = card.querySelector("img");
+                img.classList.remove("hidden");
+                count++;
+              }
+            });
+          }
+        }, 1000);
+      }
 
       let matchedCards = 0;
 
@@ -133,22 +216,11 @@
       }
       const resetBtn = document.getElementById("resetBtn");
       resetBtn.addEventListener("click", () => {
-        cards.forEach((card) => {
-          card.classList.remove("flipped");
-          card.querySelector("img").classList.add("hidden");
-        });
-
-        flippedCards = [];
-        matchedCards = 0;
-        lockBoard = false;
-
-        const status = document.getElementById("status");
-        status.innerText = "";
-
-        loadPokemonImages();
+        reset();
       });
 
       loadPokemonImages();
+      timer(id);
     </script>
   </body>
 </html>
