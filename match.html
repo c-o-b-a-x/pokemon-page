@@ -211,13 +211,14 @@
           }
         } else {
           lockBoard = true;
-
-          flippedCards.forEach((card) => {
-            card.classList.remove("flipped");
-            card.querySelector("img").classList.add("hidden");
-          });
-          flippedCards = [];
-          lockBoard = false;
+          setTimeout(() => {
+            flippedCards.forEach((card) => {
+              card.classList.remove("flipped");
+              card.querySelector("img").classList.add("hidden");
+            });
+            flippedCards = [];
+            lockBoard = false;
+          }, 1000);
         }
       }
 
