@@ -78,8 +78,16 @@
       const grid = document.getElementById("grid");
       const twelve = document.getElementById("12");
       const twentyfour = document.getElementById("24");
+      const cards = document.querySelectorAll(".card");
+      const resetBtn = document.getElementById("resetBtn");
+      let flippedCards = [];
+      let lockBoard = false;
+      let matchedCards = 0;
 
       function reset() {
+        const status = document.getElementById("status");
+        status.innerText = "Starting new game...";
+
         cards.forEach((card) => {
           card.classList.remove("flipped");
           card.querySelector("img").classList.add("hidden");
@@ -88,11 +96,13 @@
         flippedCards = [];
         matchedCards = 0;
         lockBoard = false;
-
-        const status = document.getElementById("status");
-        status.innerText = "";
+        count = 0;
         time = id * 5;
         loadPokemonImages();
+
+        setTimeout(() => {
+          status.innerText = "Game ready!";
+        }, 500);
       }
 
       twentyfour.addEventListener("click", () => {
@@ -100,22 +110,18 @@
         grid.style.gridTemplateColumns = "repeat(6, 200px)";
         grid.style.gridTemplateRows = "repeat(4, 200px)";
         id = 12;
-        timer(id);
         reset();
+        timer(id);
       });
+
       twelve.addEventListener("click", () => {
         time = 20;
-
         grid.style.gridTemplateColumns = "repeat(6, 300px)";
         grid.style.gridTemplateRows = "repeat(2, 300px)";
-
         id = 6;
-        timer(id);
         reset();
+        timer(id);
       });
-      const cards = document.querySelectorAll(".card");
-      let flippedCards = [];
-      let lockBoard = false;
 
       async function loadPokemonImages() {
         let pokemonImages = [];
@@ -124,7 +130,6 @@
           const res = await fetch(
             `https://pokeapi.co/api/v2/pokemon/${randomId}`
           );
-          console.log(res);
           const data = await res.json();
           pokemonImages.push(
             data.sprites.other["official-artwork"].front_default
@@ -132,7 +137,6 @@
         }
 
         pokemonImages = [...pokemonImages, ...pokemonImages];
-
         for (let i = pokemonImages.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
           [pokemonImages[i], pokemonImages[j]] = [
@@ -154,9 +158,7 @@
           if (card.classList.contains("flipped")) return;
 
           card.classList.add("flipped");
-          for (let i = 0; i < id; i++) {
-            card.querySelector("img").classList.remove("hidden");
-          }
+          card.querySelector("img").classList.remove("hidden");
           flippedCards.push(card);
 
           if (flippedCards.length === 2) {
@@ -164,16 +166,18 @@
           }
         });
       });
-      let timerInterval;
 
       function timer(id) {
-        clearInterval(timerInterval);
-        timerInterval = setInterval(function () {
+        setInterval(function () {
+          const status = document.getElementById("status");
+
+          if (status.innerText === "YOU WIN!!!") return;
+
           time_display.innerText = "Time Remaining: " + time;
           time -= 1;
+
           if (time <= 0) {
             time = 0;
-            clearInterval(timerInterval);
             count = 0;
             cards.forEach((card) => {
               if (count < id * 2) {
@@ -182,11 +186,10 @@
                 count++;
               }
             });
+            status.innerText = "TIME’S UP!";
           }
         }, 1000);
       }
-
-      let matchedCards = 0;
 
       function checkForMatch() {
         const [card1, card2] = flippedCards;
@@ -198,7 +201,6 @@
           flippedCards = [];
 
           if (matchedCards === cards.length) {
-            console.log("win");
             const status = document.getElementById("status");
             status.innerText = "YOU WIN!!!";
           }
@@ -214,10 +216,8 @@
           }, 1000);
         }
       }
-      const resetBtn = document.getElementById("resetBtn");
-      resetBtn.addEventListener("click", () => {
-        reset();
-      });
+
+      resetBtn.addEventListener("click", reset);
 
       loadPokemonImages();
       timer(id);
