@@ -83,6 +83,7 @@
       let flippedCards = [];
       let lockBoard = false;
       let matchedCards = 0;
+      let timerInterval = null;
 
       function reset() {
         const status = document.getElementById("status");
@@ -168,7 +169,9 @@
       });
 
       function timer(id) {
-        setInterval(function () {
+        if (timerInterval) clearInterval(timerInterval);
+
+        timerInterval = setInterval(function () {
           const status = document.getElementById("status");
 
           if (status.innerText === "YOU WIN!!!") return;
@@ -178,6 +181,7 @@
 
           if (time <= 0) {
             time = 0;
+            clearInterval(timerInterval);
             count = 0;
             cards.forEach((card) => {
               if (count < id * 2) {
@@ -203,17 +207,17 @@
           if (matchedCards === cards.length) {
             const status = document.getElementById("status");
             status.innerText = "YOU WIN!!!";
+            clearInterval(timerInterval);
           }
         } else {
           lockBoard = true;
-          setTimeout(() => {
-            flippedCards.forEach((card) => {
-              card.classList.remove("flipped");
-              card.querySelector("img").classList.add("hidden");
-            });
-            flippedCards = [];
-            lockBoard = false;
-          }, 1000);
+
+          flippedCards.forEach((card) => {
+            card.classList.remove("flipped");
+            card.querySelector("img").classList.add("hidden");
+          });
+          flippedCards = [];
+          lockBoard = false;
         }
       }
 
