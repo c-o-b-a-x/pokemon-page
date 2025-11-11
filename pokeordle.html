@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="icon.jpg" type="image/jpg" />
+    <title>Pokeordle</title>
+  </head>
+
+  <body>
+    <div class="navbar">
+      <a class="navbar-item" href="index.html">Home</a>
+      <a class="navbar-item" href="hunt.html">Poke Hunt</a>
+      <a class="navbar-item" href="list.html">Pokemon List</a>
+      <a class="navbar-item" href="who.html">Who's That Pokemon</a>
+      <a class="navbar-item" href="pokedex.html">Name The Pokedex</a>
+      <a class="navbar-item" href="match.html">Pokemon Matching Game</a>
+      <a class="navbar-item" href="pokeordle.html">Pokeordle</a>
+    </div>
+
+    <h1>Pokémon Wordle</h1>
+
+    <div class="labels">
+      <div>Type</div>
+      <div>Gen</div>
+      <div>Height</div>
+      <div>Weight</div>
+      <div>ID</div>
+    </div>
+
+    <div class="board center">
+      <div class="row">
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+      </div>
+      <div class="row">
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+      </div>
+      <div class="row">
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+      </div>
+      <div class="row">
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+      </div>
+      <div class="row">
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+      </div>
+      <div class="row">
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+        <div class="tile"></div>
+      </div>
+
+      <img class="guess hidden" alt="Pokémon" />
+
+      <form id="guess_pokemon">
+        <input
+          type="text"
+          id="guess"
+          name="pokemon"
+          placeholder="Enter Pokémon name"
+        />
+      </form>
+    </div>
+
+    <footer class="footer">
+      <div>
+        <p>Developed By Coby Hughes</p>
+        <a
+          href="https://github.com/c-o-b-a-x"
+          target="_blank"
+          class="github-link"
+        >
+          <img
+            src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
+            alt="GitHub Logo"
+            class="github-logo"
+          />
+        </a>
+      </div>
+    </footer>
+
+    <script>
+      const guess_pokemon = document.getElementById("guess_pokemon");
+      const guess_input = document.getElementById("guess");
+      const suggestionsContainer = document.createElement("div");
+      suggestionsContainer.classList.add("suggestions2");
+      guess_pokemon.appendChild(suggestionsContainer);
+
+      const guess_img = document.querySelector(".guess");
+      let allPokemon = [];
+      let currentPokemonName = "";
+      let guess_count = 0;
+      // answer variables
+      let answergen = "";
+      let answerid = "";
+      let answerheight = "";
+      let answertype = "";
+      let answerweight = "";
+      // guess variables
+      let guessgen = "";
+      let guessid = "";
+      let guessheight = "";
+      let guesstype = "";
+      let guessweight = "";
+
+      fetch("https://pokeapi.co/api/v2/pokemon?limit=898")
+        .then((res) => res.json())
+        .then((data) => {
+          allPokemon = data.results.map((p) => p.name);
+        });
+
+      async function getRandomPokemon() {
+        if (guess_count === 0) {
+          const randomId = Math.floor(Math.random() * 898) + 1;
+
+          try {
+            const res = await fetch(
+              `https://pokeapi.co/api/v2/pokemon/${randomId}`
+            );
+            const pokemon = await res.json();
+
+            const speciesRes = await fetch(pokemon.species.url);
+            const speciesData = await speciesRes.json();
+
+            currentPokemonName = pokemon.name;
+            answergen = speciesData.generation.name;
+            answerheight = pokemon.height;
+            answerweight = pokemon.weight;
+            answerid = pokemon.id;
+            answertype = pokemon.types.map((t) => t.type.name);
+
+            console.log({
+              currentPokemonName,
+              answergen,
+              answerheight,
+              answerweight,
+              answerid,
+              answertype,
+            });
+
+            if (guess_img) {
+              guess_img.src =
+                pokemon.sprites.other["official-artwork"].front_default;
+              guess_img.alt = pokemon.name;
+            }
+
+            guess_count += 1;
+          } catch (error) {
+            console.error("Error fetching Pokémon:", error);
+          }
+        }
+      }
+
+      guess_input.addEventListener("input", function () {
+        const value = guess_input.value.toLowerCase().trim();
+        suggestionsContainer.innerHTML = "";
+        if (!value) return;
+
+        const matches = allPokemon.filter((p) => p.startsWith(value));
+        matches.slice(0, 5).forEach((match) => {
+          const div = document.createElement("div");
+          div.innerText = match;
+          div.addEventListener("click", () => {
+            guess_input.value = match;
+            suggestionsContainer.innerHTML = "";
+          });
+          suggestionsContainer.appendChild(div);
+        });
+      });
+      guess_pokemon.addEventListener("submit", () => {
+        prevent;
+        fetch(
+          `https://pokeapi.co/api/v2/pokemon/${guess_input.value
+            .toLowerCase()
+            .trim()}`
+        )
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data.name);
+          });
+      });
+      getRandomPokemon();
+    </script>
+  </body>
+</html>

@@ -1,8 +1,21 @@
+/* --- General --- */
+body {
+  font-family: "Trebuchet MS", sans-serif;
+  color: #222;
+  text-align: center;
+  background: linear-gradient(180deg, #ffcb05, #3b4cca);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 .center {
   display: block;
   margin: 0 auto;
   text-align: center;
 }
+
+/* --- Navbar --- */
 .navbar {
   background-color: #ff0000;
   border-bottom: 3px solid black;
@@ -29,25 +42,117 @@
   border-radius: 10px;
   transform: scale(1.1);
 }
-body {
-  font-family: "Trebuchet MS", sans-serif;
-  color: #222;
-  text-align: center;
-  background: linear-gradient(180deg, #ffcb05, #3b4cca);
-  background-attachment: fixed;
-  background-repeat: no-repeat;
-  background-size: cover;
+
+/* --- Heading --- */
+h1 {
+  font-size: 2.5em;
+  color: #ff0000;
+  text-shadow: 2px 2px #000;
+  margin-top: 30px;
 }
 
-.footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: transparent;
+/* --- Container --- */
+.container {
+  background: rgba(255, 255, 255, 0.85);
+  border: 5px solid #ff0000;
+  border-radius: 20px;
+  max-width: 700px;
+  margin: 50px auto;
+  padding: 30px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Score --- */
+#score {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #222;
+  margin: 10px 0;
+}
+
+/* --- Images --- */
+img.guess {
+  width: 300px;
+  height: 300px;
+  object-fit: contain;
+  transition: filter 0.5s;
+  margin-top: 20px;
+  filter: brightness(0); /* keep blacked out */
+}
+
+/* --- Guess Form --- */
+form {
+  margin-top: 20px;
+  position: relative; /* for suggestions */
+}
+
+input[type="text"] {
+  padding: 10px;
+  font-size: 1.2em;
+  border: 3px solid #ff0000;
+  border-radius: 10px;
+  width: 250px;
   text-align: center;
-  padding: 15px 0;
-  z-index: 100;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 1.1em;
+  border: 3px solid black;
+  border-radius: 10px;
+  background-color: #ff0000;
+  color: white;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: 0.3s;
+}
+
+button:hover {
+  background-color: white;
+  color: black;
+  transform: scale(1.05);
+}
+
+/* --- Status --- */
+#status {
+  margin-top: 20px;
+  font-size: 1.4em;
+  font-weight: bold;
+}
+
+/* --- Autocomplete Suggestions --- */
+.suggestions {
+  position: absolute;
+  top: 100%;
+  left: 48%;
+  transform: translateX(-50%);
+  border: 1px solid #ccc;
+  max-height: 150px;
+  overflow-y: auto;
+  background: white;
+  width: 250px;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.suggestions div {
+  padding: 5px;
+  cursor: pointer;
+}
+
+.suggestions div:hover {
+  background-color: #f0f0f0;
+}
+
+/* --- Footer --- */
+.whofooter {
+  position: relative;
+  width: 100%;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  margin-top: 100px; /* below input */
+  z-index: 10;
 }
 
 .footer div {
@@ -56,29 +161,14 @@ body {
   gap: 10px;
 }
 
-.footer p {
-  margin: 0;
-  font-size: 16px;
-  color: white;
-}
-
-.github-link {
-  display: inline-block;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
 .github-logo {
   width: 32px;
   height: 32px;
-  filter: invert(1);
+  filter: invert(0); /* original GitHub logo */
   vertical-align: middle;
 }
 
-.github-link:hover {
-  transform: scale(1.1);
-  opacity: 0.8;
-}
-
+/* --- Matching Game Grid --- */
 #grid {
   display: grid;
   grid-template-columns: repeat(6, 300px);
@@ -101,57 +191,90 @@ body {
   transform: scale(1.05);
   opacity: 50%;
 }
-h1 {
-  font-size: 2.5em;
-  color: #ff0000;
-  text-shadow: 2px 2px #000;
-  margin-top: 30px;
-}
 
-.flipped {
+.card.flipped {
   background: linear-gradient(180deg, #ffcb05, #3b4cca);
-}
-.hidden {
-  display: none;
 }
 
 .card img {
   width: 90%;
   height: auto;
+  display: none;
 }
+
 .card.flipped img {
   display: block;
 }
 
+/* --- Reset Button --- */
 #reset-btn {
   width: 100px;
   height: 50px;
   background-color: #000;
   color: white;
 }
-#guess_pokemon {
-  position: relative;
-  display: inline-block;
+
+/* --- Board (other grid game) --- */
+.board {
+  display: grid;
+  grid-template-rows: repeat(6, 1fr);
+  gap: 10px;
+  justify-content: center;
+  margin: 40px auto;
 }
 
-.suggestions {
-  position: absolute;
-  top: 100%;
-  left: 35%;
-  transform: translateX(-50%);
-  border: 1px solid #ccc;
-  max-height: 150px;
-  overflow-y: auto;
-  background: white;
-  width: 200px;
-  z-index: 10;
+.row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
 }
 
-.suggestions div {
-  padding: 5px;
-  cursor: pointer;
+.tile {
+  width: 150px;
+  height: 80px;
+  background-color: #1e293b;
+  border: 3px solid black;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  text-transform: capitalize;
 }
 
-.suggestions div:hover {
-  background-color: #f0f0f0;
+.labels {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 110px;
+  justify-content: center;
+  margin: 20px auto;
+  width: fit-content;
+  font-weight: bold;
+  font-size: 18px;
+  color: white;
+  text-shadow: 1px 1px 2px #000;
+}
+
+/* --- Responsive --- */
+@media (max-width: 600px) {
+  h1 {
+    font-size: 2em;
+  }
+
+  .navbar-item {
+    font-size: 1.2em;
+    padding: 8px;
+  }
+
+  img.guess {
+    width: 200px;
+    height: 200px;
+  }
+
+  input[type="text"] {
+    width: 200px;
+  }
 }
